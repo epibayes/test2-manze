@@ -1,0 +1,43 @@
+---
+title: Mixture simulation
+date: \today
+header-includes:
+- \usepackage{float}
+- \usepackage{wrapfig}
+- \usepackage{graphicx}
+- \usepackage{titlesec}
+- \usepackage{subcaption}
+- \usepackage{bbm}
+numbersections: true
+---
+
+```{r root, echo = FALSE, purl=FALSE}
+# Set correct root dir for knitr and figure path
+require(knitr)
+knitr::opts_knit$set(root.dir=normalizePath("../.."))
+```
+
+# Figures
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/figures/p_mu.pdf}
+\caption{\textbf{Posterior distribution of component means}.}
+\label{fig:mu}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/figures/p_sd.pdf}
+\caption{\textbf{Posterior distribution of component standard deviations}.}
+\label{fig:mu}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/figures/p_p.pdf}
+\caption{\textbf{Posterior distribution of mixture probability}.}
+\label{fig:mu}
+\end{figure}
