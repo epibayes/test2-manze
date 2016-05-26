@@ -56,7 +56,7 @@ mu2_g  <- mu2_g + theme(axis.line = element_line(colour = "black"),
           plot.title = element_text(face = "bold"),
           axis.ticks = element_line(colour="black"))
 
-pdf(file.path(opts$o, "mu.pdf"), width = 10, height = 5)
+pdf(file.path(opts$o, "p_mu.pdf"), width = 10, height = 5)
 grid.arrange(mu1_g, mu2_g, ncol = 2, nrow = 1)
 dev.off()
 
@@ -90,7 +90,7 @@ sd2_g  <- sd2_g + theme(axis.line = element_line(colour = "black"),
           axis.ticks = element_line(colour="black"))
 
 
-pdf(file.path(opts$o, "sd.pdf"), width = 10, height = 5)
+pdf(file.path(opts$o, "p_sd.pdf"), width = 10, height = 5)
 grid.arrange(sd1_g, sd2_g, ncol = 2, nrow = 1)
 dev.off()
 
@@ -108,4 +108,4 @@ p_g  <- p_g + theme(axis.line = element_line(colour = "black"),
           plot.title = element_text(face = "bold"),
           axis.ticks = element_line(colour="black"))
 
-ggsave(file.path(opts$o, "p.pdf"))
+ggsave(file.path(opts$o, "p_p.pdf"))

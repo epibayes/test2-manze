@@ -23,10 +23,23 @@ output/stan_samples.Rds : src/runmodel.R src/model.stan output/samples.csv
 ## Generate figures using the posterior distributions of model parameters.
 ## Note the additional dependency on the input parameters, which we use to
 ## get a sense of goodness-of-fit in the posterior plots
-output/figures/*.pdf : src/make_figures.R output/stan_samples.Rds output/parameters.Rds
+output/figures/p_*.pdf : src/make_figures.R output/stan_samples.Rds output/parameters.Rds
 	@echo --- Generating figures ---
 	@mkdir -p $(@D)
 	./$< -o output/figures -s $(word 2, $^) -p $(word 3, $^)
+
+output/results.md : presentations/results.Rmd 
+	@echo ----Translating results from RMD to Markdown----
+	Rscript \
+		-e "require(knitr)" \
+                -e "knitr::render_markdown()"\
+		-e "knitr::knit('$<','$@')"
+
+
+output/results.pdf : output/results.md output/figures/*.pdf
+	@echo ----Generating PDF from Markdown----
+	pandoc $< -V geometry:margin=1.0in --from=markdown -t latex -s -o $@  
+
 
 .PHONY: clean
 clean :
