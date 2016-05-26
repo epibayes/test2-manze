@@ -18,7 +18,7 @@ output/figures/*.pdf : src/make_figures.R output/stan_samples.Rds output/paramet
 	@mkdir -p $(@D)
 	./$< -o output/figures -s $(word 2, $^) -p $(word 3, $^)
 
-
 .PHONY: clean
 clean :
+	@echo --- Removing generated files ---
 	rm -r output
