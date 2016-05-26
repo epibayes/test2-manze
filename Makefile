@@ -18,7 +18,7 @@ output/samples.csv : src/simdata.R output/parameters.Rds
 output/stan_samples.Rds : src/runmodel.R src/model.stan output/samples.csv 
 	@echo --- Running Stan mixture model ---
 	@mkdir -p $(@D)
-	./$< -o $@ -m $(word 2, $^) -d $(word 3, $^)  -c 2 -i 5000
+	./$< -o $@ -m $(word 2, $^) -d $(word 3, $^)  -c 2 -i 2000
 
 ## Generate figures using the posterior distributions of model parameters.
 ## Note the additional dependency on the input parameters, which we use to
@@ -28,18 +28,28 @@ output/figures/p_*.pdf : src/make_figures.R output/stan_samples.Rds output/param
 	@mkdir -p $(@D)
 	./$< -o output/figures -s $(word 2, $^) -p $(word 3, $^)
 
-output/results.md : presentations/results.Rmd 
+output/figures/d_density.pdf : src/data_figure.R output/samples.csv
+	@echo --- Generating data figure ---
+	@mkdir -p $(@D)
+	./$< -o output/figures -d $(word 2, $^)
+
+## Translate from Rmarkdown to markdown using knitr
+output/results.md : presentations/results.Rmd output/figures/p_*.pdf output/parameters.csv
 	@echo ----Translating results from RMD to Markdown----
+	@mkdir -p $(@D)
 	Rscript \
 		-e "require(knitr)" \
                 -e "knitr::render_markdown()"\
 		-e "knitr::knit('$<','$@')"
 
-
-output/results.pdf : output/results.md output/figures/*.pdf
+## Generate PDF from resulting markdown
+output/results.pdf : output/results.md 
 	@echo ----Generating PDF from Markdown----
-	pandoc $< -V geometry:margin=1.0in --from=markdown -t latex -s -o $@  
+	@mkdir -p $(@D)
+	pandoc $< -V geometry:margin=1.0in --from=markdown -t latex -s -o $@  -V fontsize=12pt
 
+.PHONY: pdf
+pdf : output/results.pdf
 
 .PHONY: clean
 clean :

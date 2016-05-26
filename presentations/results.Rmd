@@ -1,6 +1,7 @@
 ---
-title: Mixture simulation
+title: Fixing a finite mixture model with RStan
 date: \today
+author: Jon Zelner
 header-includes:
 - \usepackage{float}
 - \usepackage{wrapfig}
@@ -14,10 +15,53 @@ numbersections: true
 ```{r root, echo = FALSE, purl=FALSE}
 # Set correct root dir for knitr and figure path
 require(knitr)
-knitr::opts_knit$set(root.dir=normalizePath("../.."))
+knitr::opts_knit$set(root.dir=normalizePath(".."))
 ```
 
-# Figures
+# Introduction
+
+This is meant as a short tutorial on how to fit a Stan model in a way that is fully reproducible using, R, Stan, Docker, Knitr, and Pandoc, and finally Make to orchestrate everything.
+
+But along the way, this will also be a quick tutorial on how to fit a finite mixture model using Stan. In this case, we'll be simulating data from a 2-component Gaussian mixture, fitting a model written in Stan to the simulated data, plotting the results, and compiling it all into a PDF.
+
+
+# Methods
+
+First, a quick overview of the 2-component finite mixture model we'll be simulating from and fitting. The model has five parameters, $\mu_1$ and $\mu_2$ are the component means, and $\sigma_1$ and $\sigma_2$ are the standard deviations of components 1 and 2 respectively. Finally, $p$ is the mixture probability, in this case the proportion of samples drawn from component 1.
+
+The following table lists the parameters set in `data/parameters.csv`:
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(readr)
+require(dplyr)
+d <- read_csv("data/parameters.csv")
+od <- filter(d, parameter != "n")
+nsamples <- filter(d, parameter == "n")$value[1]
+z <- kable(od, digits = 10, caption = "Parameter values", format = "pandoc")
+```
+
+`r z`
+
+To simulate from this model, we first draw a Bernoulli random variable with success probability $p$ to select the component we'll be drawing from, i.e. $z_i \sim Bernoulli(p)$. So, $z_i = 1$, we'll sample $x_i$ from $Normal(\mu_1, \sigma_1)$, otherwise $Normal(\mu_2, \sigma_2)$.
+
+And here's what `r sprintf("%d", nsamples)` draws from this distribution looks like:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{output/figures/d_density.pdf}
+\caption{\textbf{Input data.}}
+\label{fig:mu}
+\end{figure}
+
+To estimate the parameters of this model, we're going to use the marginalization approach to latent variables outlined in the Stan user's guide. We can think of each sample as being associated with a latent variable $z_i$ indicates the mixture component it was sampled from. Stan allows us to easily marginalize out this variable using the full mixture likelihood. If we define $g(.|\mu,\sigma)$ to be the PDF of a Gaussian distribution, we can then calculate the likelihood of observing a sample $x_i$ given the model parameters $\theta$ as follows:
+
+\begin{equation}
+Pr(x_i | \theta) = p\cdot g(x_i|\mu_1,\sigma_1) + (1-p)\cdot g(x_i|\mu_2,\sigma_2)
+\end{equation}
+
+# Results
+
+Figure \ref{fig:mu} shows the posterior distributions of the component means as compared to the input values (indicated by dashed vertical lines):
 
 \begin{figure}[H]
 \centering
@@ -26,18 +70,20 @@ knitr::opts_knit$set(root.dir=normalizePath("../.."))
 \label{fig:mu}
 \end{figure}
 
+Figure \ref{fig:sd} shows the posterior distributions of the component standard deviations as compared to the input values (indicated by a vertical dashed lines):
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{output/figures/p_sd.pdf}
 \caption{\textbf{Posterior distribution of component standard deviations}.}
-\label{fig:mu}
+\label{fig:sd}
 \end{figure}
 
+And Figure \ref{fig:p} shows the posterior distribution of the mixture probability as compared to its input value:
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{output/figures/p_p.pdf}
+\includegraphics[width=0.5\textwidth]{output/figures/p_p.pdf}
 \caption{\textbf{Posterior distribution of mixture probability}.}
-\label{fig:mu}
+\label{fig:p}
 \end{figure}
