@@ -1,16 +1,7 @@
-## Phony target to touch parameters file to be sure to re-run simulations and generate PDF.
-##Up at top of Makefile  so that typing just `make` will generate everything.
-## Can also use `make all`. Use `make pdf` to re-generate PDF from existing results
-
-.PHONY: all
-all: pdf touchpars
-
+## Phony target to make pdf
 .PHONY: pdf
-pdf : output/results.pdf all
+pdf : output/results.pdf 
 
-## Touch 
-touchpars :
-	@touch data/parameters.csv
 
 ## First, extract parameters from the text-based makefile into an R
 ## list saved into an RDS object file. This just makes it easier to access
