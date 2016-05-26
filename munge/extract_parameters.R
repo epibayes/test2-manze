@@ -11,6 +11,9 @@ Options:
 
 opts <- docopt(doc)
 
+suppressMessages(require(readr))
+
+
 ## Load model parameters
 pd <- read_csv(opts$p)
 
