@@ -4,7 +4,7 @@ This is a simple example of how a fully reproducible analysis looks using Stan a
 
 An example of what the output should look like is available [here](https://dl.dropboxusercontent.com/s/e99l7q4c3toderd/mixture_model_output.pdf).
 
-If you want to run locally and have `ggplot2, rstan, dplyr` and `readr` installed in R, as well as a working Pandoc and LaTeX installation, just type `make pdf` at the *nix/Mac command line.
+If you want to run locally and have `ggplot2, rstan, dplyr` and `readr` installed in R, as well as a working Pandoc and LaTeX installation, just type `make pdf` at the *nix/Mac command line. To make sure that the simulation is re-run, either run `touch data/parameters.csv` before calling `make`, or use `./build.sh` which will do this for you.
 
 Otherwise, running everything in here without doing any local config relies on the docker image [jonzelner/rstan](https://hub.docker.com/r/jonzelner/rstan/) on Docker Hub.
 
