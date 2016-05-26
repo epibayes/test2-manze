@@ -32,7 +32,7 @@ data_in <- list(N = nrow(d),
 m <- stan(opts$m,
           iter = as.numeric(opts$i),
           chains = as.numeric(opts$c),
-          samplefile = opts$o,
+          sample_file = opts$o,
           data = data_in)
 
 saveRDS(m, opts$o)

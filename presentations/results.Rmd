@@ -24,6 +24,8 @@ This is meant as a short tutorial on how to fit a Stan model in a way that is fu
 
 But along the way, this will also be a quick tutorial on how to fit a finite mixture model using Stan. In this case, we'll be simulating data from a 2-component Gaussian mixture, fitting a model written in Stan to the simulated data, plotting the results, and compiling it all into a PDF.
 
+To generate new results, just go into the file `data/parameters.csv` and change a parameter value. When you type `make pdf` at the command line, the simulation model will run again with the new parameter values, parameters for the Stan model will be re-estimated, and figures (and this PDF) will be automatically regenerated.
+
 
 # Methods
 

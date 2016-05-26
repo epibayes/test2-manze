@@ -1,3 +1,17 @@
+## Phony target to touch parameters file to be sure to re-run simulations and generate PDF.
+##Up at top of Makefile  so that typing just `make` will generate everything.
+## Can also use `make all`. Use `make pdf` to re-generate PDF from existing results
+
+.PHONY: all
+all: pdf touchpars
+
+.PHONY: pdf
+pdf : output/results.pdf all
+
+## Touch 
+touchpars :
+	@touch data/parameters.csv
+
 ## First, extract parameters from the text-based makefile into an R
 ## list saved into an RDS object file. This just makes it easier to access
 ## parameters by name during model execution and post-processing
@@ -34,7 +48,7 @@ output/figures/d_density.pdf : src/data_figure.R output/samples.csv
 	./$< -o output/figures -d $(word 2, $^)
 
 ## Translate from Rmarkdown to markdown using knitr
-output/results.md : presentations/results.Rmd output/figures/p_*.pdf output/parameters.csv
+output/results.md : presentations/results.Rmd output/figures/p_*.pdf data/parameters.csv
 	@echo ----Translating results from RMD to Markdown----
 	@mkdir -p $(@D)
 	Rscript \
@@ -48,8 +62,6 @@ output/results.pdf : output/results.md
 	@mkdir -p $(@D)
 	pandoc $< -V geometry:margin=1.0in --from=markdown -t latex -s -o $@  -V fontsize=12pt
 
-.PHONY: pdf
-pdf : output/results.pdf
 
 .PHONY: clean
 clean :
